@@ -20,7 +20,7 @@
 #            should be identical in both files.
 #            As an option, this also displays Percentage IDentity.
 #
-# Usage    : "evalign.pl any_seq_file.msf any_struc_file.jp ["  while any_seq_file.msf
+# Usage    : "evalign.pl any_seq_file.msf any_struc_file.jp "  while any_seq_file.msf
 #            is a computer aligned output and any_struc_file.jp is a any seq file
 #            from known structures. (eg,  evalign.pl  aa.msf aa.jp )
 #
@@ -28,6 +28,7 @@
 #
 # Argument : Two files of sequence alignment. The first one should be COMPUTER aligned
 #            and the second one is the CORRECT (i.e., structural) alignment.
+#
 # Options  : seg is for showing the accuracy of alignment on secondary str. blocks.
 #            ss  is for showing DSSP secondary structure assignment in output.
 #            H   is for showing HELIX DSSP secondary structure assignment in output.
@@ -55,8 +56,9 @@
 #
 # Returns  : simple shifted positions.
 # Author   : Jong Park
-# Version  : 1.4
 # Package  : Part of Bioperl project.
+# CopyLeft : GPL
+# Version  : 1.5
 #-------------------------------------------------------------------
 
 ftp site:  ftp.mrc-lmb.cam.ac.uk  /pub/genomes/jong/Software/Evalign

@@ -1,0 +1,1066 @@
+<html>
+<H2  ALIGN=CENTER><FONT COLOR="#DC143C">evalign.pl.html</H2></FONT>
+<br>
+<H6 ALIGN=RIGHT>Sun Oct 12 06:59:33 BST 1997
+Created by  <A href="/gn0/jong/Perl/headbox2html.pl.html">/gn0/jong/Perl/headbox2html.pl</A></H6> <hr><H3><A href="evalign.pl.html">evalign</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/evalign.pl">evalign.pl</A>
+<pre>
+<b>Argument  </b> : Two files of sequence alignment. The first one should be COMPUTER aligned
+            and the second one is the CORRECT (i.e., structural) alignment.
+<b>Author    </b> : A Biomatic
+<b>Example   </b> : evalign.pl aa.msf aa.jp -ss -H -E -p
+
+<b>Function  </b> : When you align any sequences by computer algorithms, you want
+            to know whether they are correctly aligned in terms of structures.
+            If the sequences are from already known structures, you can compare
+            and align structural sequences which can be said 'biologically correct'.
+            This program, 'evalign.pl' is for comparing the two sets of sequences
+            aligned, by calculating the absolute position differences between the
+            correct and computer aligned one. This is aware of gap intertions and
+            correct alignment made after wrong alignment segment is counted as correct.
+            It accepts two sequence files at prompt to calculate the differences
+            of positions of the sequences in the input files. The input sequences
+            should be identical in both files.
+            As an option, this also displays Percentage IDentity.
+<b>Options   </b> : seg is for showing the accuracy of alignment on secondary str. blocks.
+            ss  is for showing DSSP secondary structure assignment in output.
+            H   is for showing HELIX DSSP secondary structure assignment in output.
+            E   is for showing Beta-strand DSSP secondary structure assignment in out.
+            s   is for sorted final output.
+            p   is for displaying conventional percent ID.
+            h   is for displaying help
+            ns  is for $no_simplify by -ns, ns, Ns, NS, -Ns # seq names are sorted in final output
+            t=  is for convert to num of 1 or 0 threshold.
+            c   is for convert to num of 1 or 0, default threshold '1' is used
+            N   for DO NOT Normalize the error rate which can be more than 1 digit
+
+ $NO_normalize      = 1  by  N -N
+ $segment_rate      = 1  by  -seg, seg, Seg # Shows secondary str. block PSR
+ $show_percent_id   = 1  by  -p, -P, p, P,  # Shows conventional percent ID.
+ $show_sec_str      = 1  by  -ss, ss or SS  # Show Secondary Structure -ss option
+ $HELIX_only        = H  by  -H, H          # Shows conventional percent ID.
+ $BETA_only         = E  by  -E, E          # Shows conventional percent ID.
+ $print_sort        = s  by  -s, s or S     # seq names are sorted in final output
+ $interlaced        = i  by  -i, i or I     # seq names are sorted in final output
+ $no_simplify       = 1  by  -ns, ns, Ns, NS, -Ns # seq names are sorted in final output
+ $threshold         =    by  t=    # seq names are sorted in final output
+ $convert_to_0_or_1 = 1  by  -c, C, c, Con  # seq names are sorted in final output
+ $HELP              = 1  by  -h, h          # for showing help
+
+<b>Package   </b> : Part of Bioperl project.
+<b>Returns   </b> : simple shifted positions.
+<b>Usage     </b> : "evalign.pl any_seq_file.msf any_struc_file.jp ["  while any_seq_file.msf
+            is a computer aligned output and any_struc_file.jp is a any seq file
+            from known structures. (eg,  evalign.pl  aa.msf aa.jp )
+<b>Version   </b> : 1.4
+</pre><hr>
+
+<H3><A href="get_segment_shift_rate
+.pl.html">get_segment_shift_rate
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/get_segment_shift_rate
+.pl">get_segment_shift_rate
+.pl</A>
+<pre>
+<b>Author    </b> : A Biomatic
+<b>Example   </b> : <input example> First block is for the first hash input
+                            and Second is for the second hash input.
+
+           1cdg_6taa      00000442222222222242222222222777700000007000000000
+           1cdg_2aaa      00000442222222222242222222222777700000007000000000
+           2aaa_6taa      00000000000000000000000000000000000000000000000000
+
+           1cdg_6taa      -------EEE-----------EE--EEEE------EE---------EEE-
+           1cdg_2aaa      -------EEE-----------EE--EEEE------EE---------EEE-
+           2aaa_6taa      -------EEEEE------EE-EEEEEEEE----EEEE-------EEEEE-
+
+            <intermediate output example>
+           2aaa_6taa      -------00000---------00000000----0000-------00000-
+           1cdg_6taa      -------442---------------2222-----------------000-
+           1cdg_2aaa      -------222---------------2222-----------------000-
+
+            <Final output>
+           2aaa_6taa      0%
+           1cdg_6taa      67%
+           1cdg_2aaa      67%
+
+<b>Function  </b> : calculates the secondary structure segment shift rate.
+<b>Keywords  </b> : later sub of get_position_shift_rate for secondary structure regions
+            get positon shift rate for secondary structure regions.
+<b>Options   </b> : 'p' or 'P' for percentage term(default)
+: 'r' or 'R' for ratio term (0.0 - 1.0), where 1 means all the
+             segments were wrongly aligned.
+: 's' or 'S' for Shift rate (it actually caculates the position shift
+             rate for the secondary structure segment.
+: 'h' or 'H' for position Shift rate (it actually caculates the position
+             shift rate for helical segments). If this is the only option, it
+             will show the default percentage term rate for helical segments.
+             If used with 'r', it will give you ratio (0.0 - 1.0) for helical
+             segment. If used with 's' option, it will give you position shift
+             rate for only helical segments.
+: 'e' or 'E' for position Shift rate (it actually caculates the position
+             shift rate for beta segments). If this is the only option, it will
+             show the default percentage term rate for beta segments. If used
+             with 'r', it will give you ratio (0.0 - 1.0) for beta. If used
+             with 's' option, it will give you position shift rate for only
+             beta segments.
+<b>Usage     </b> : &get_segment_shift_rate(\%hash_for_errors, \%hash_for_sec_str);
+<b>Version   </b> : 1.0
+</pre><hr>
+
+<H3><A href="overlay_seq_by_certain_chars
+.pl.html">overlay_seq_by_certain_chars
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/overlay_seq_by_certain_chars
+.pl">overlay_seq_by_certain_chars
+.pl</A>
+<pre>
+<b>Argument  </b> : 2 ref for hash of identical keys and value length.
+<b>Author    </b> : A Biomatic
+<b>Example   </b> : %out =%{&overlay_seq_by_certain_chars(\%hash1, \%hash2, 'E')};
+             output> with 'E' option >>> "name1     --HHH--1232-"
+<b>Function  </b> : (name1 000000112324)+(name1  ABC..AD..EFDK ) => (name1 000..00..12324)
+             (name2 000000112324)+(name2  --HHH--EEEE-- ) => (name1 ---000--1123--)
+             uses the second hash a template for the first sequences. gap_char is
+             '-' or '.' or any given char or symbol.
+             To insert gaps rather than overlap, use insert_gaps_in_seq_hash
+<b>Keywords  </b> : Overlap, superpose hash, overlay, superpose_seq_hash
+<b>Options   </b> : E for replacing All 'E' occurrances in ---EEEE--HHHH----, etc.
+             : H for replacing all 'H'  "     " "
+<b>Package   </b> : Array_Util
+<b>Returns   </b> : one hash ref.
+<b>Usage     </b> : %out =%{&overlay_seq_by_certain_chars(\%hash1, \%hash2, 'HE')};
+<b>Version   </b> : 1.0
+<b>Warning   </b> : If gap_chr ('H',,,) is not given, it replaces all the
+             non-gap chars (normal alphabet), ie,
+             it becomes 'superpose_seq_hash'
+</pre><hr>
+
+<H3><A href="read_dir_names_only
+.pl.html">read_dir_names_only
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/read_dir_names_only
+.pl">read_dir_names_only
+.pl</A>
+<pre>
+<b>Argument  </b> : takes one or more scaler references. ('.', \$path, $path, ... )
+<b>Author    </b> : A Biomatic
+<b>Function  </b> : read any dir names and and then put in array.
+<b>Returns   </b> : one ref. of array.
+<b>Usage     </b> : @all_dirs_list = @{&read_dir_names_only(\$absolute_path_dir_name, ....)};
+<b>Version   </b> : 3.1
+<b>Warning   </b> : This does not report '.', '..'
+             Only file names are reported. Compare with &read_any_dir
+</pre><hr>
+
+<H3><A href="overlay_seq_for_identical_chars
+.pl.html">overlay_seq_for_identical_chars
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/overlay_seq_for_identical_chars
+.pl">overlay_seq_for_identical_chars
+.pl</A>
+<pre>
+<b>Argument  </b> : 2 ref for hash of identical keys and value length. One optional arg for
+             replacing space char to the given one.
+<b>Author    </b> : A Biomatic
+<b>Example   </b> : %out =%{&overlay_seq_for_identical_chars(\%hash1, \%hash2, '-')};
+             output> with 'E' option >>> "name1     --HHH--1232-"
+<b>Function  </b> : (name1         --EHH--HHEE-- )
+             (name2         --HHH--EEEE-- ) ==> result is;
+
+             (name1_name2   -- HH--  EE-- )
+             to get the identical chars in hash strings of sequences.
+
+<b>Keywords  </b> : Overlap, superpose hash, overlay identical chars, superpose_seq_hash
+<b>Package   </b> : Array_Util
+<b>Returns   </b> : one hash ref. of the combined key name (i.e., name1_name2). Combined by '_'
+<b>Usage     </b> : %out =%{&overlay_seq_for_identical_chars(\%hash1, \%hash2, '-')};
+<b>Version   </b> : 1.0
+<b>Warning   </b> : Works only for 2 sequence hashes.
+</pre><hr>
+
+<H3><A href="normalize_numbers
+.pl.html">normalize_numbers
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/normalize_numbers
+.pl">normalize_numbers
+.pl</A>
+<pre>
+<b>Argument  </b> : (\%hash1, %hash2, \%hash3, ....)
+<b>Author    </b> : A Biomatic
+<b>Example   </b> : intputhash>                   Outputhash>
+             ( '1-2', '12,.,1,2,3,4',     ( '1-2',   '9,.,0,1,2,3',
+              '2-3', '12,.,1,5,3,4',       '2-3',   '9,.,0,4,2,3',
+              '4-3', '12,3,1,2,3,4',       '3-1',   '9,3,.,.,2,3',
+              '3-1', '12,4,.,.,3,4' );     '4-3',   '9,2,0,1,2,3' );
+<b>Function  </b> : with given numbers in hashes, it makes a scale of 0-9 and puts
+             all the elements in the scale. Also returns the average of the numbs.
+<b>Returns   </b> : (\%norm_hash1, \%norm_hash2, \%norm_hash3,.... )
+
+<b>Usage     </b> : %output=%{&normalize_numbers(\%hash1)};
+             originally made to normalize the result of get_posi_rates_hash_out
+             in   'scan_compos_and_seqid.pl'
+<b>Used in   </b> : evalign.pl
+<b>Version   </b> : 1.0
+</pre><hr>
+
+<H3><A href="hash_stat_for_all
+.pl.html">hash_stat_for_all
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/hash_stat_for_all
+.pl">hash_stat_for_all
+.pl</A>
+<pre>
+<b>Author    </b> : A Biomatic
+<b>Example   </b> : %in =(1, "13242442", 2, "92479270", 3, "2472937439");
+             %in2=(1, "28472", 2, "23423240", 3, "123412342423439");
+
+             %in =(name1, "1,3,2,4,2,4,4,2", name2, "9,2,4,7,9,2,7,0");
+
+<b>Function  </b> : gets the min, max, av, sum for the whole values of ALL the
+             hashes put in. (grand statistics)
+<b>Returns   </b> : normal array of ($min, $max, $sum, $av)
+             Example  out:>                 |  min max sum  av
+                            -----------------------------------
+                            of the whole    |   0   9  110   6
+<b>Usage     </b> : %out=%{&hash_average(\%in, \%in2,..)};
+<b>Used in   </b> : normalize_numbers
+<b>Version   </b> : 1.0
+</pre><hr>
+
+<H3><A href="tidy_secondary_structure_segments
+.pl.html">tidy_secondary_structure_segments
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/tidy_secondary_structure_segments
+.pl">tidy_secondary_structure_segments
+.pl</A>
+<pre>
+<b>Argument  </b> : hashes and [options]. No options result in default of 'H3', 'E3'
+<b>Author    </b> : A Biomatic
+<b>Example   </b> : print_seq_in_block(&tidy_secondary_structure_segments(\%hash, 'e4', 'h4'), 's');
+             <makes following into the next block>
+
+             1cdg_2aaa      -------EEE-----------EE--EEEE------EE---------EEE-
+             1cdg_6taa      -------EEE-----------EE--EEEE------EE---------EEE-
+             2aaa_6taa      -------EEEEE------EE-EEEEEEEE----EEEE-------EEEEE-
+
+             <example output>
+
+             1cdg_6taa      -------------------------EEEE---------------------
+             1cdg_2aaa      -------------------------EEEE---------------------
+             2aaa_6taa      -------EEEEE---------EEEEEEEE----EEEE-------EEEEE-
+
+<b>Function  </b> : receives any secondary structure assignment hashes and
+             tidys up them. That is removes very shoft secondary structure
+             regions like( --HH--, -E-, -EE- ) according to the given minimum
+             lengths(threshold) of segments by you.
+<b>Options   </b> : something like 'H3' or 'E3' for minimum segment length set to 3 positions.
+<b>Package   </b> : Bio::Seq
+<b>Returns   </b> : array of references of hashes.
+<b>Usage     </b> : print_seq_in_block(&tidy_secondary_structure_segments(\%hash, 'e4', 'h4'), 's');
+
+<b>Version   </b> : 1.0.0
+</pre><hr>
+
+<H3><A href="superpose_seq_hash
+.pl.html">superpose_seq_hash
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/superpose_seq_hash
+.pl">superpose_seq_hash
+.pl</A>
+<pre>
+<b>Argument  </b> : 2 refs. for hash of identical keys and value length and gap_chr.
+<b>Author    </b> : A Biomatic
+<b>Function  </b> : (name1 000000112324)+(name1  ABC..AD..EFD ) => (name1 000..01..324)
+             uses the second hash a template for the first sequences. gap_char is
+             '-' or '.'
+             To insert gaps rather than overlap, use insert_gaps_in_seq_hash
+<b>Keywords  </b> : overlay sequence, overlay alphabet, superpose sequence,
+<b>Returns   </b> : one hash ref.
+<b>Usage     </b> : %out =%{&superpose_seq_hash(\%hash1, \%hash2)};
+<b>Version   </b> : 1.0
+<b>Warning   </b> : Accepts only two HASHes and many possible gap_chr. Default gap is '-'
+</pre><hr>
+
+<H3><A href="insert_gaps_in_seq_hash
+.pl.html">insert_gaps_in_seq_hash
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/insert_gaps_in_seq_hash
+.pl">insert_gaps_in_seq_hash
+.pl</A>
+<pre>
+<b>Argument  </b> : 2 ref for hash of identical keys and value length.
+<b>Author    </b> : A Biomatic
+<b>Function  </b> : superpose two hashes of the same sequence or same seq. length sequences,
+             but unlike 'superpose_seq_hash', this inserts gaps and extend the
+             sequences.
+             (name1_sec  hHHHHHH EEEEEEE) +
+             (name1_seq  .CDEABC..AD..EFD..EKST) => (name1_ext  .hHHHHH..H...EEE..EEEE)
+             In the example, the undefined sec. str. position is replaced as gaps('.')
+             Uses the second hash a template for the first sequences. gap_char is
+             '-' or '.'
+<b>Keywords  </b> : superposing sequences with gaps
+<b>Returns   </b> : one hash ref.
+<b>Usage     </b> : %out_extended_seq =%{&insert_gaps_in_seq_hash(\%hash1, \%hash2)};
+<b>Version   </b> : 1.1
+<b>Warning   </b> : coded by A Biomatic
+</pre><hr>
+
+<H3><A href="get_position_shift_rate
+.pl.html">get_position_shift_rate
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/get_position_shift_rate
+.pl">get_position_shift_rate
+.pl</A>
+<pre>
+<b>Argument  </b> : %{&get_position_shift_rate(\%msfo_file, \%jpo_file)};
+             Whatever the names, it takes one TRUE structral and one ALIGNED hash.
+<b>Author    </b> : A Biomatic
+<b>Example   </b> : my(%error_rate)=%{&get_position_shift_rate(\%input, \%input2)};
+<b>Function  </b> : This is to get position specific error rate for line display rather than
+             actual final error rate for the alignment. Takes two file names of seq.
+             Output >>
+             seq1_seq2  1110...222...2222
+             seq2_seq3  1111....10...1111
+             seq1_seq3  1111....0000.0000
+
+<b>Options   </b> : 'ss' for secondary structure regions(Helix and Beta region only
+                 calculation for error rate). There is specialized sub called
+              get_segment_shift_rate for sec. str. only handling.
+
+    $ss_opt            becomes    ss by  ss, SS, -ss, -SS     #  for secondary structure only
+    $H                 =         'H' by   -H or -h or H       # to retrieve only H segment
+    $S                 becomes   'S' by   -S or  S            # to retrieve only S segment
+    $E                 becomes   'E' by   -E or  E            # to retrieve only E segment
+    $T                 becomes   'T' by   -T or -t or T or t  # to retrieve only T segment
+    $I                 becomes   'I' by   -I or  I            # to retrieve only I segment
+    $G                 becomes   'G' by   -G or -g or G or g  # to retrieve only G segment
+    $B                 becomes   'B' by   -B or -b or B or b  # to retrieve only B segment
+    $HELP              becomes    1  by   -help   # for showing help
+    $simplify          becomes    1  by   -p or P or -P, p
+    $simplify          becomes    1  by   -simplify or simplify, Simplify SIMPLIFY
+    $comm_col          becomes   'C' by   -C or C or common
+    $LIMIT             becomes    L  by   -L, L               # to limit the error rate to 9 .
+
+<b>Returns   </b> : \%final_posi_diffs;
+<b>Usage     </b> : %rate_hash = %{&get_position_shift_rate(\%hash_msf, \%hash_jp)};
+<b>Version   </b> : 1.5
+<b>Warning   </b> : split and join char is ','; (space)
+</pre><hr>
+
+<H3><A href="convert_num_0_or_1_hash_opposite
+.pl.html">convert_num_0_or_1_hash_opposite
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/convert_num_0_or_1_hash_opposite
+.pl">convert_num_0_or_1_hash_opposite
+.pl</A>
+<pre>
+<b>Argument  </b> : two references, one for hash one for scaler for threshold
+
+<b>Author    </b> : A Biomatic
+<b>Example   </b> : A hash =>  name1  10012924729874924792742749748374297
+                        name2  10012924729874924792710012924729874
+             A threshold => 4
+             !! if numbers are smaller than 4, they become 1 (or true).
+             Outputhash  =>  name1  11111011011111011111011011110101111
+                        name2  11111011010001011001011010010101100
+
+             ($ref1, $ref2)=&convert_num_to_0_or_1_hash(\%hash, \%hash, \$threshold);
+             above is the example when with more than 2 input hashes.
+<b>Function  </b> : changes all the numbers into 0 or 1 according to threshold given.
+             convert_num_0_or_1_hash converts threshold and bigger nums. to
+             '0' while convert_num_0_or_1_hash_opposite converts to '1'.
+<b>Usage     </b> : with a variable for threshold ->
+
+               %out = %{&convert_num_0_or_1_hash_opposite(\%input_hash, \$threshold)};
+
+<b>Version   </b> : 1.0
+<b>Warning   </b> : Threshold value is set to 0 as well as all values smaller than that.
+</pre><hr>
+
+<H3><A href="parse_arguments
+.pl.html">parse_arguments
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/parse_arguments
+.pl">parse_arguments
+.pl</A>
+<pre>
+<b>Argument  </b> : uses @ARGV
+<b>Author    </b> : A Biomatic
+<b>Example   </b> : &parse_arguments(1);
+             @files=@{&parse_arguments(1)};
+<b>Function  </b> : Parse and assign any types of arguments on prompt in UNIX to
+             the various variables inside of the running program.
+             This is more visual than getopt and easier.
+             just change the option table_example below for your own variable
+             setttings. This program reads itself and parse the arguments
+             according to the setting you made in this subroutine or
+             option table in anywhere in the program.
+<b>Options   </b> : '0'  to specify that there is no argument to sub, use
+              &parse_arguments(0);
+             parse_arguments itself does not have any specific option.
+             '#' at prompt will make a var  $debug set to 1. This is to
+              print out all the print lines to make debugging easier.
+<b>Returns   </b> : Filenames in a reference of array
+             and input files in an array (file1, file2)=@{&parse_arguments};
+<b>Usage     </b> : &parse_arguments; or  (file1, file2)=@{&parse_arguments};
+<b>Version   </b> : 1.6
+<b>Warning   </b> : HASH and ARRAY mustn't be like = (1, 2,3) or (1,2 ,3)
+</pre><hr>
+
+<H3><A href="print_seq_in_block
+.pl.html">print_seq_in_block
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/print_seq_in_block
+.pl">print_seq_in_block
+.pl</A>
+<pre>
+<b>Argument  </b> : many refs  for hash (one for bottm, one for top, etc,top hash is usually
+               to denote certain caculations or results of the bottom one
+<b>Author    </b> : A Biomatic
+<b>Enclosed  </b> : -- Following are examples.
+             Example of ( no option, DEFAULT )  # Example of ('i' or 'I' option,
+                                                                INTERLACE )
+             6taa           ----ATPADWRSQSIY    #   6taa       ------ATPADWRSQSIY
+             2aaa           ------LSAASWRTQS    #   6taa       ------CCHHHHCCCCEE
+             1cdg           APDTSVSNKQNFSTDV    #   6taa       ------563640130000
+
+             6taa           ------CCHHHHCCCC    #   2aaa       ------LSAASWRTQSIY
+             2aaa           ------CCHHHHCCCC    #   2aaa       ------CCHHHHCCCCEE
+             1cdg           CCCCCCCCCCCCCCCC    #   2aaa       ------271760131000
+
+             6taa           ------5636401300    #   1cdg       APDTSVSNKQNFSTDVIY
+             2aaa           ------2717601310    #   1cdg       CCCCCCCCCCCCCCCCEE
+             1cdg           6752327236000000    #   1cdg       675232723600000000
+
+             Example of('s' or 'S' option,SORT) # Example of ('o' or 'O' option,
+                                                        ORDERED by input hashes )
+
+             1cdg           APDTSVSNKQNFSTDV    #   6taa       ------ATPADWRSQSIY
+             2aaa           ------LSAASWRTQS    #   2aaa       ------LSAASWRTQSIY
+             6taa           ------ATPADWRSQS    #   1cdg       APDTSVSNKQNFSTDVIY
+
+             1cdg           CCCCCCCCCCCCCCCC    #   6taa       ------CCHHHHCCCCEE
+             2aaa           ------CCHHHHCCCC    #   2aaa       ------CCHHHHCCCCEE
+             6taa           ------CCHHHHCCCC    #   1cdg       CCCCCCCCCCCCCCCCEE
+
+             1cdg           6752327236000000    #   6taa       ------563640130000
+             2aaa           ------2717601310    #   2aaa       ------271760131000
+             6taa           ------5636401300    #   1cdg       675232723600000000
+<b>Example   </b> : If there are 3 hashes output will be; (in the order of \%hash3, \%hash2, \%hash1)
+             >> 1st Hash        >> 2nd Hash         >> 3rd Hash
+             Name1  THIS-IS-    Name123  eHHHHHHH   Name123  12222223
+
+             You will get;
+                            Name1    THIS-IS-
+                            Name123  eHHHHHHH
+                            Name123  12222223
+
+<b>Function  </b> : gets many refs  for one scalar  or hashes and prints
+               the contents in lines of \$block_leng(the only scalar ref. given) char.
+<b>Options   </b> : 'o' or 'O' => ordered hash print,
+             'n' or'N' => no space between blocks.
+             's' or 'S' => printout sorted by seq names.
+             'i' or 'I' => interlaced print.(this requires identical names in hashes)
+             'v' or 'V' => show sequence start number at each line
+             (all options can be like \$sort
+             while $sort has 's' as value. naked number like 100 will be the
+             block_length. 'i' or 'I' => interlaced print.(this requires
+             identical names in hashes)
+<b>Usage     </b> : &print_seq_in_block (\$block_leng, 'i',\%h1, 'sort', \%h2, \%hash3,,,);
+<b>Version   </b> : 1.1
+</pre><hr>
+
+<H3><A href="open_dssp_files
+.pl.html">open_dssp_files
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/open_dssp_files
+.pl">open_dssp_files
+.pl</A>
+<pre>
+<b>Argument  </b> : files names like (6taa, 6taa.dssp) If you put just '6taa' without extension, it
+             searches if there is a '6taa.dssp' in both PWD and $DSSP env. set directory.
+             ---------- Example of dssp ---
+             **** SECONDARY STRUCTURE DEFINITION BY THE PROGRAM DSSP, VERSION JUL
+             REFERENCE W
+             HEADER    RIBOSOME-INACTIVATING PROTEIN           01-JUL-94   1MRG
+             COMPND    ALPHA-MOMORCHARIN COMPLEXED WITH ADENINE
+             SOURCE    BITTER GOURD (CUCURBITACEAE MOMORDICA CHARANTIA) SEEDS
+             AUTHOR    Q
+             246  1  0  0  0 TOTAL NUMBER OF RESIDUES, NUMBER OF CHAINS, NUMBER OF SS-BRIDGES(TOTAL,INTRACHAIN,INTERCHAIN)                .
+             112 95.0   ACCESSIBLE SURFACE OF PROTEIN (ANGSTROM**2)                                                                         .
+             171 69.5   TOTAL NUMBER OF HYDROGEN BONDS OF TYPE O(I)-->H-N(J)  , SAME NUMBER PER 100 RESIDUES                              .
+             12   4.9   TOTAL NUMBER OF HYDROGEN BONDS IN     PARALLEL BRIDGES, SAME NUMBER PER 100 RESIDUES                              .
+             36  14.6   TOTAL NUMBER OF HYDROGEN BONDS IN ANTIPARALLEL BRIDGES, SAME NUMBER PER 100 RESIDUES                              .
+             1    0.4   TOTAL NUMBER OF HYDROGEN BONDS OF TYPE O(I)-->H-N(I-5), SAME NUMBER PER 100 RESIDUES                              .
+             1    0.4   TOTAL NUMBER OF HYDROGEN BONDS OF TYPE O(I)-->H-N(I-4), SAME NUMBER PER 100 RESIDUES                              .
+             74  30.1   TOTAL NUMBER OF HYDROGEN BONDS OF TYPE O(I)-->H-N(I+4), SAME NUMBER PER 100 RESIDUES                              .
+             5    2.0   TOTAL NUMBER OF HYDROGEN BONDS OF TYPE O(I)-->H-N(I+5), SAME NUMBER PER 100 RESIDUES                              .
+             1    2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30     *** HISTOGRAMS OF ***           .
+             0    0  0  0  1  1  0  2  0  0  1  0  0  1  0  0  0  0  0  2  0  0  0  0  0  0  0  0  0  0    RESIDUES PER ALPHA HELIX         .
+             1    0  0  2  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0    PARALLEL BRIDGES PER LADDER      .
+             2    0  1  2  0  1  1  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0    ANTIPARALLEL BRIDGES PER LADDER  .
+             2    0  0  0  1  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0    LADDERS PER SHEET                .
+             #   RESIDUE AA STRUCTURE BP1 BP2  ACC   N-H-->O  O-->H-N  N-H-->O  O-->H-N    TCO  KAPPA ALPHA  PHI   PSI    X-CA   Y-CA   Z-CA
+             1    1   D              0   0  132    0, 0.0   2,-0.3   0, 0.0  49,-0.2   0.000 360.0 360.0 360.0 153.4   44.0   96.9  -23.8
+             2    2   V  E     -a   50   0A  10   47,-1.5  49,-2.8   2, 0.0   2,-0.3  -0.889 360.0-163.3-115.9 151.4   43.1  100.4  -22.5
+             3    3   S  E     -a   51   0A  63   -2,-0.3   2,-0.3  47,-0.2  49,-0.2  -0.961  10.3-172.8-131.0 152.3   44.8  103.7  -23.4
+             4    4   F  E     -a   52   0A   8   47,-2.2  49,-2.3  -2,-0.3   2,-0.4  -0.985   6.9-161.2-143.2 139.5   45.0  107.2  -22.0
+             5    5   R  E     -a   53   0A 144   -2,-0.3   4,-0.2  47,-0.2  49,-0.2  -0.993   9.7-156.0-121.0 125.9   46.6  110.2  -23.6
+             6    6   L  S    S+     0   0    1   47,-2.3   2,-0.5  -2,-0.4   3,-0.4   0.644  73.2  90.9 -73.3 -22.4   47.5  113.2  -21.4
+             7    7   S  S    S+     0   0   81   47,-0.3   3,-0.1   1,-0.2  -2,-0.1  -0.695 106.0   5.2 -75.5 121.0   47.4  115.6  -24.4
+             8    8   G  S    S+     0   0   72   -2,-0.5  -1,-0.2   1,-0.3   5,-0.1   0.269  97.6 147.8  90.2 -10.7   43.9  117.0  -24.7
+             9    9   A        +     0   0   10   -3,-0.4  -1,-0.3  -4,-0.2  -3,-0.1  -0.256  16.8 166.8 -58.8 142.4   42.9  115.2  -21.5
+             (\$inputfile1, \$inputfile2, .... )};
+<b>Author    </b> : A Biomatic
+<b>Function  </b> : open dssp files and put sequences in a hash(s)
+              It can take options for specific secondary structure types. For example,
+              if you put an option $H in the args of the sub with the value of 'H'
+              open_dssp_files will only read secondary structure whenever it sees 'H'
+              in xxx.dssp file ignoring any other sec. str. types.
+              If you combine the options of 'H' and 'E', you can get only Helix and long
+              beta strand sections defined as segments. This is handy to get sec. str. segments
+              from any dssp files to compare with pdb files etc.
+             With 'simplify' option, you can convert only all the 'T', 'G' and 'I' sec. to
+              'H' and 'E'.
+<b>Options   </b> : H, S, E, T, I, G, B, P, C, -help
+ $H        =        'H' by   -H or -h or H or h  # to retrieve 4-helix (alpha helical)
+ $S        becomes  'S' by   -S or -s or S or s  # to retrieve Extended strand, participates in B-ladder
+ $E        becomes  'E' by   -E or -e or E or e  # to retrieve residue in isolated Beta-bridge
+ $T        becomes  'T' by   -T or -t or T or t  # to retrieve H-bonded turn
+ $I        becomes  'I' by   -I or -i or I or i  # to retrieve 5-helix (Pi helical) segment output
+ $G        becomes  'G' by   -G or -g or G or g  # to retrieve 3-helix (3-10 helical)
+ $B        becomes  'B' by   -B or -b or B or b  # to retrieve only B segment
+ $simplify becomes   1  by   -p or P or -P, p
+ $comm_col becomes  'c' by   -c or c or C or -C or common
+ $HELP     becomes   1  by   -help   # for showing help
+
+<b>Returns   </b> : (*out, *out2)  or (@out_array_of_refs)
+<b>Usage     </b> : (*out, *out2) = @{&open_dssp_files(\$inputfile1, \$inputfile2, \$H, \$S,,,,)};
+             (@out)        = @{&open_dssp_files(\$inputfile1, \$inputfile2, \$H, \$S,,,,)};
+<b>Version   </b> : 2.9
+$debug feature has been added to make it produce error messages with '#' option.
+<b>Warning   </b> : 6taa.dssp  and 6taa are regarded as the same.
+</pre><hr>
+
+<H3><A href="get_wrong_segment_rate
+.pl.html">get_wrong_segment_rate
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/get_wrong_segment_rate
+.pl">get_wrong_segment_rate
+.pl</A>
+<pre>
+<b>Author    </b> : A Biomatic
+<b>Example   </b> : <input example> hash of 3 keys and values.
+             2aaa_6taa      -------00000---------00000000----0000-------00000-
+             1cdg_6taa      -------442---------------2222-----------------000-
+             1cdg_2aaa      -------222---------------2222-----------------000-
+
+             In the above there are two segments wrong in 3 segment blocks = 2/3
+             <output example> hash of 3 percentage rates.
+
+             2aaa_6taa      0 %
+             1cdg_6taa      66.6666666666667 %
+             1cdg_2aaa      66.6666666666667 %
+
+<b>Function  </b> : Treats the segment as one single big error.
+             calculates the wrong segment number compared to the correct ones.
+<b>Usage     </b> : print_seq_in_block( &get_wrong_segment_rate(\%superposed_hash) );
+<b>Used in   </b> : get_segment_shift_rate
+<b>Version   </b> : 1.0
+</pre><hr>
+
+<H3><A href="get_correct_percent_alignment_rate
+.pl.html">get_correct_percent_alignment_rate
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/get_correct_percent_alignment_rate
+.pl">get_correct_percent_alignment_rate
+.pl</A>
+<pre>
+<b>Argument  </b> : two sequence files which have identical sequence names.
+<b>Author    </b> : A Biomatic
+<b>Function  </b> : accepts two files and prints out the sequence identities of the alignment.
+<b>Options   </b> : h  # for help
+             v  # for verbose printouts(prints actual sequences)
+<b>Returns   </b> : reference of Scalar for percentage correct alignment(for already
+             aligned sequences)
+<b>Usage     </b> : &get_correct_percent_alignment_rate(\$file1, \$file2);
+<b>Warning   </b> : Alpha version,  A Biomatic , made for Bissan
+</pre><hr>
+
+<H3><A href="read_any_seq_files
+.pl.html">read_any_seq_files
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/read_any_seq_files
+.pl">read_any_seq_files
+.pl</A>
+<pre>
+<b>Argument  </b> : one of more ref. for scalar.
+<b>Author    </b> : A Biomatic
+<b>Example   </b> : (*out1,  *out2) =&read_any_seq_files(\$input1, \$input2);
+             : (@out_ref_array)=@{&read_any_seq_files(\$input1, \$input2)};
+             : (%one_hash_out) =%{&read_any_seq_files(\$input1)};
+<b>Function  </b> : Tries to find given input regardless it is full pathname, with or
+             without extension. If not in pwd, it searches the dirs exhaustively.
+<b>Keywords  </b> : open_any_seq_files
+<b>Options   </b> : v for $verbose setting showing some information in runtime
+
+<b>Returns   </b> : 1 ref. for a HASH of sequence ONLY if there was one hash input
+             1 array (not REF.) of references for multiple hashes.
+<b>Usage     </b> : %out_seq=%{&read_any_seq_files(\$input_file_name)};
+<b>Version   </b> : 1.1
+</pre><hr>
+
+<H3><A href="open_jp_files
+.pl.html">open_jp_files
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/open_jp_files
+.pl">open_jp_files
+.pl</A>
+<pre>
+<b>Author    </b> : A Biomatic
+<b>Function  </b> : reads jp files and stores results in a hash.
+<b>Returns   </b> : a reference of a hash for names and  their sequences.
+<b>Usage     </b> : %out_hash=%{&open_jp_files(\$file_name)};
+<b>Version   </b> : 1.1
+<b>Warning   </b> : All the spaces  '-' !!!
+</pre><hr>
+
+<H3><A href="open_msf_files
+.pl.html">open_msf_files
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/open_msf_files
+.pl">open_msf_files
+.pl</A>
+<pre>
+<b>Argument  </b> : (\$inputfile1, \$inputfile2, .... )};
+<b>Author    </b> : A Biomatic
+<b>Function  </b> : open msf files and put sequences in a hash(s)
+<b>Returns   </b> : (*out, *out2)  or (@out_array_of_refs)
+<b>Usage     </b> : (*out, *out2) = @{&open_msf_files(\$inputfile1, \$inputfile2)};
+             : %hash_seq = %{&open_msf_files(\$inputfile1)};
+             : (@out)        = @{&open_msf_files(\$inputfile1, \$inputfile2)};
+             ---------- Example of MSF ---
+             PileUp
+
+             MSF:   85  Type: P    Check:  5063   ..
+
+<b>Version   </b> : 1.1
+</pre><hr>
+
+<H3><A href="default_help
+.pl.html">default_help
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/default_help
+.pl">default_help
+.pl</A>
+<pre>
+<b>Example   </b> : &default_help2; &default_help2(\$arg_num_limit);   &default_help2( '3' );
+             1 scalar digit for the minimum number of arg (optional),
+             or its ref. If this defined, it will produce exit the program
+             telling the minimum arguments.
+<b>Function  </b> : Prints usage information and others when invoked. You need to have
+             sections like this explanation box in your perl code. When invoked,
+             default_help routine reads the running perl code (SELF READING) and
+             displays what you have typed in this box.
+             After one entry names like # Function :, the following lines without
+             entry name (like this very line) are attached to the previous entry.
+             In this example, to # Function : entry.
+<b>Package   </b> : File_Util
+<b>Returns   </b> : formated information
+<b>Tips      </b> : This usually goes with  parse_arguments.pl (= easy_opt.pl)
+<b>Usage     </b> : &default_help2;  usually with 'parse_arguments' sub.
+<b>Used in   </b> : parse_arguments,
+<b>Version   </b> : 3.2
+<b>Warning   </b> : this uses format and references
+</pre><hr>
+
+<H3><A href="set_debug_option
+.pl.html">set_debug_option
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/set_debug_option
+.pl">set_debug_option
+.pl</A>
+<pre>
+<b>Author    </b> : A Biomatic
+<b>Class     </b> : Utility
+<b>Example   </b> : set_debug_option #    <-- at prompt.
+<b>Function  </b> : If you put '#' or  '##' at the prompt of any program which uses
+             this sub you will get verbose printouts for the program if the program
+             has a lot of comments.
+<b>Options   </b> : #   for 1st level of verbose printouts
+             ##  for even more verbose printouts
+$debug  becomes 1 by '#'  or '_'
+$debug2 becomes 1 by '##'  or '__'
+
+<b>Reference </b> : http://sonja.acad.cai.cam.ac.uk/perl_for_bio.html
+<b>Returns   </b> : $debug
+<b>Usage     </b> : &set_debug_option;
+<b>Version   </b> : 1.8
+             generalized debug var is added for more verbose printouts.
+</pre><hr>
+
+<H3><A href="remov_com_column
+.pl.html">remov_com_column
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/remov_com_column
+.pl">remov_com_column
+.pl</A>
+<pre>
+<b>Argument  </b> : accepts reference for hash(es) and array(s).
+<b>Author    </b> : A Biomatic
+<b>Function  </b> : removes common gap column in seq.
+<b>Keywords  </b> : remove_com_column, remove_common_column,
+             remove_common_gap_column, remov_common_gap_column,
+             remove com column
+<b>Returns   </b> : a ref. of  hash(es) and array(s).
+
+             name1   ABCDE....DDD       name1  ABCDE..DDD
+             name2   ABCDEE..DD..  -->  name2  ABCDEEDD..
+             name3   ...DEE..DDE.       name3  ...DEEDDE.
+
+             (ABC....CD, ABCD...EE) --> (ABC.CD, ABCDEE)
+             from above the two column of dot will be removed
+             To remove absurd gaps in multiple sequence alignment. for nt6-hmm.pl
+<b>Usage     </b> : %new_string = %{&remov_com_column(\%hashinput)};
+             @out=@{&remov_com_column(\@array3)};
+</pre><hr>
+
+<H3><A href="tidy_secondary_structure_segments
+.pl.html">tidy_secondary_structure_segments
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/tidy_secondary_structure_segments
+.pl">tidy_secondary_structure_segments
+.pl</A>
+<pre>
+<b>Argument  </b> : hashes and [options]. No options result in default of 'H3', 'E3'
+<b>Author    </b> : A Biomatic
+<b>Example   </b> : print_seq_in_block(&tidy_secondary_structure_segments(\%hash, 'e4', 'h4'), 's');
+             <makes following into the next block>
+
+             1cdg_2aaa      -------EEE-----------EE--EEEE------EE---------EEE-
+             1cdg_6taa      -------EEE-----------EE--EEEE------EE---------EEE-
+             2aaa_6taa      -------EEEEE------EE-EEEEEEEE----EEEE-------EEEEE-
+
+             <example output>
+
+             1cdg_6taa      -------------------------EEEE---------------------
+             1cdg_2aaa      -------------------------EEEE---------------------
+             2aaa_6taa      -------EEEEE---------EEEEEEEE----EEEE-------EEEEE-
+
+<b>Function  </b> : receives any secondary structure assignment hashes and
+             tidys up them. That is removes very shoft secondary structure
+             regions like( --HH--, -E-, -EE- ) according to the given minimum
+             lengths(threshold) of segments by you.
+<b>Options   </b> : something like 'H3' or 'E3' for minimum segment length set to 3 positions.
+<b>Package   </b> : Bio::Seq
+<b>Returns   </b> : array of references of hashes.
+<b>Usage     </b> : print_seq_in_block(&tidy_secondary_structure_segments(\%hash, 'e4', 'h4'), 's');
+
+<b>Version   </b> : 1.0.0
+</pre><hr>
+
+<H3><A href="get_posi_diff
+.pl.html">get_posi_diff
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/get_posi_diff
+.pl">get_posi_diff
+.pl</A>
+<pre>
+<b>Argument  </b> : Takes two ref. for arrays which have positions of residues.
+<b>Author    </b> : A Biomatic
+<b>Example   </b> : @compacted_posi_dif =(1 ,2, 1, 1, '.' ,2,  1,  1, '.');
+             @compacted_posi_dif2=(4 ,2, 1, 1, ,2,  1, '.' ,3,  1);
+             output ==> ( 3 0 0 0 . 1 . 2 .)   (it ignores positions which have non digits.
+             output ==> (-3 0 0 0 . 1 .-2 .) when abs is not used.
+<b>Returns   </b> : one ref. for an @array of differences of input arrays. array context.
+<b>Usage     </b> : @position_diffs =&get_posi_diff(\@seq_position1,\@seq_position2);
+<b>Used in   </b> : evalign.pl, get_position_shift_rate
+<b>Version   </b> : 1.4
+</pre><hr>
+
+<H3><A href="get_posi_sans_gaps
+.pl.html">get_posi_sans_gaps
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/get_posi_sans_gaps
+.pl">get_posi_sans_gaps
+.pl</A>
+<pre>
+<b>Argument  </b> : one scalar variable input of sequence string.
+<b>Author    </b> : A Biomatic
+<b>Returns   </b> : the positions of residues after removing gaps(but keeps pos).
+               used for analysis of shifted positions of seq. comparison.
+<b>Usage     </b> : @seq_position1 = &get_posi_sans_gaps($string1);
+<b>Version   </b> : 1
+</pre><hr>
+
+<H3><A href="get_common_column
+.pl.html">get_common_column
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/get_common_column
+.pl">get_common_column
+.pl</A>
+<pre>
+<b>Argument  </b> : 2 or more ref for hash of identical keys and value length.
+             One optional arg for replacing space char to the given one.
+<b>Author    </b> : A Biomatic
+<b>Class     </b> : get_common_column, get_common_column_in_seq,
+             get common column in sequence, superpose_secondary_structure,
+             get_common_secondary_structure,
+             for secondary structure only representation.
+<b>Example   </b> : %out =%{&get_common_column(\%hash1, \%hash2, '-')};
+             output> with 'E' option >>> "name1     --HHH--1232-"
+   Following input will give;
+   %hash1 = ('s1', '--EHH-CHHEE----EHH--HHEE----EHH--HHEE----EHH-CHHEE--');
+   %hash2 = ('s2', '--EEH-CHHEE----EEH-CHHEE----EEH-CHHEE----EEH-CHHEE--');
+   %hash3 = ('s3', '-KEEH-CHHEE-XX-EEH-CHHEE----EEH-CHHEE----EEH-CHHEE--');
+   %hash4 = ('s4', '-TESH-CHEEE-XX-EEH-CHHEE----EEH-CHHEE----EEH-CHHEE--');
+
+     s1_s2_s3_s4    --E-H-CH-EE----E-H--HHEE----E-H--HHEE----E-H-CHHEE--
+
+<b>Function  </b> : (name1         --EHH--HHEE-- )
+             (name2         --HHH--EEEE-- ) ==> result is;
+
+             (name1_name2   -- HH--  EE-- )
+             to get the identical chars in hash strings of sequences.
+
+<b>Keywords  </b> : Overlap, superpose hash, overlay identical chars, superpose_seq_hash
+             get_common_column, get_com_column, get_common_sequence,
+             get_common_seq_region, multiply_seq_hash,
+<b>Package   </b> : Array_Util
+<b>Returns   </b> : one hash ref. of the combined key name (i.e., name1_name2). Combined by '_'
+<b>Usage     </b> : %out =%{&get_common_column(\%hash1, \%hash2, '-')};
+<b>Version   </b> : 1.5
+<b>Warning   </b> : This gets more than 2 hashes. Not more than that!
+
+</pre><hr>
+
+<H3><A href="array_average
+.pl.html">array_average
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/array_average
+.pl">array_average
+.pl</A>
+<pre>
+<b>Argument  </b> : takes one array reference.
+<b>Author    </b> : A Biomatic
+<b>Function  </b> : (the same as average_array)
+<b>Keywords  </b> : get_array_average, av_array, average_array, get_average_array
+             average_of_array, average_array
+<b>Returns   </b> : single scaler digit.
+<b>Usage     </b> : $output = &array_average(\@any_array);
+<b>Version   </b> : 1.2
+<b>Warning   </b> : If divided by 0, it will automatically replace it with 1
+</pre><hr>
+
+<H3><A href="find_seq_files
+.pl.html">find_seq_files
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/find_seq_files
+.pl">find_seq_files
+.pl</A>
+<pre>
+<b>Argument  </b> : (\$input_file_name) while $input_file_name can be  'xxx.xxx', or '/xxx/xxx/xxx/xxy.yyy'
+             or just directory name like 'aat' for  /nfs/ind4/ccpe1/people/A Biomatic /jpo/align/aat
+             then, it tries to find a file with stored seq file extensions like msf, jp, pir etc
+             to make aat.msf, aat.jp, aat.pir ... and searches for these files.
+<b>Author    </b> : A Biomatic
+<b>Example   </b> : $found_file=${&find_seq_files(\$input_file_name)};
+<b>Function  </b> : (similar to find.pl) used in 'read_any_seq_file.pl'
+             seeks given test file in pwd, specified dir, default path etc.
+             If not found yet, it looks at all the subdirectories of path and pwd.
+             PATH environment dirs, then returns full path file name.
+<b>Keywords  </b> : find_anyj_seq_files, find any seq files, find seq files
+<b>Returns   </b> : return( \$final );
+<b>Usage     </b> : $found_file = ${&find_seq_files(\$input_file_name)};
+<b>Version   </b> : 1.0
+</pre><hr>
+
+<H3><A href="put_position_back_to_str_seq
+.pl.html">put_position_back_to_str_seq
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/put_position_back_to_str_seq
+.pl">put_position_back_to_str_seq
+.pl</A>
+<pre>
+<b>Argument  </b> : takes two refs for arrays (one for char the other for digits
+<b>Author    </b> : A Biomatic
+<b>Example   </b> : @string_from_struct=('X', 'T', 'A' ,'B' , '.' ,'F',  'G', '.' , 'O' ,'P', '.');
+             @compacted_posi_dif=(1 ,2, 1, 1, ,2, 1, 1, 1);
+<b>Returns   </b> : a ref. for an array
+<b>Usage     </b> : @result =@{&put_position_back_to_str_seq(\@string_from_struct, \@compacted_posi_dif)};
+<b>Version   </b> : 1.0
+</pre><hr>
+
+<H3><A href="hash_common_by_keys
+.pl.html">hash_common_by_keys
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/hash_common_by_keys
+.pl">hash_common_by_keys
+.pl</A>
+<pre>
+<b>Author    </b> : A Biomatic
+<b>Returns   </b> : the VALUES OF THE FIRST HASH which occur in later hashes
+             are returned
+<b>Usage     </b> : %hash1_value = %{&hash_common_by_keys(\%hash1, \%hash2,...)};
+</pre><hr>
+
+<H3><A href="convert_arr_and_str_2_hash
+.pl.html">convert_arr_and_str_2_hash
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/convert_arr_and_str_2_hash
+.pl">convert_arr_and_str_2_hash
+.pl</A>
+<pre>
+<b>Argument  </b> : one or more ref. of arrays
+<b>Author    </b> : A Biomatic
+<b>Example   </b> : &print_seq_in_block(&convert_arr_and_str_2_hash(\@input,\@input2,\@input3 ));
+             &convert_arr_and_str_2_hash(\$input1,\$input2, '2' );
+             results in; (ordering starts from the given '2')
+                          array_2       input1 arraystring
+                          array_3       input2 arraystring
+
+             one more exam
+                          string_6       This is st                  and 3 strings)
+                          string_10      This is st
+                          array_2        111233434242
+                          array_6        111233434242
+                          array_10       111243424224
+<b>Function  </b> : makes hash(es) out of array(s)
+             if ordering digit(s) is put, it orders the keys according to it.
+             if ordering digit is not increased by one, the difference is used
+             as the increasing factor. No option results in
+             array_1, array_2, array_3...
+
+<b>Returns   </b> : one or more ref. of hashes.
+<b>Usage     </b> : ($hash1, $hash2)=&convert_arr_and_str_2_hash(\$input, \$input2, '1', '2'.. );
+             * This is the combination of convert_string_to_hash & convert_array_to_hash
+</pre><hr>
+
+<H3><A href="get_residue_error_rate
+.pl.html">get_residue_error_rate
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/get_residue_error_rate
+.pl">get_residue_error_rate
+.pl</A>
+<pre>
+<b>Argument  </b> : Takes a ref. for hash which have positions of residues of sequences.
+<b>Author    </b> : A Biomatic
+<b>Function  </b> : This is the final step in error rate getting.
+             gets a ref. of a hash and calculates the absolute position diffs.
+<b>Options   </b> : 'L' for limitting the error rate to 9 to make one digit output
+$LIMIT becomes 'L' by L, l, -l, -L
+<b>Returns   </b> : one ref. for an array of differences of input arrays. array context.
+             ---Example input (a hash with sequences); The values are differences after
+                                comparion with structural and sequential alignments.
+             %diffs =('seq1', '117742433441...000',   <-- input (can be speparated by '' or ','.
+                      'seq2', '12222...99999.8888',
+                      'seq3', '66222...44444.8822',
+                      'seq4', '12262...00666.772.');
+             example output;
+             seq3_seq4       '0,1,0,0,0,.,.,.,,.,0,,0,0,,0,0,,.,0,,0,0,.'
+             seq1_seq2       '0,1,0,1,1,.,.,.,,.,2,,2,2,,2,2,,.,.,,2,2,1'
+             seq1_seq3       '0,1,0,1,1,.,.,.,,.,1,,1,1,,0,.,,.,.,,1,1,1'
+             seq1_seq4       '0,1,0,,1,1,.,.,.,,.,1,,1,1,0,.,.,,.,1,,2,2'
+             seq2_seq3       '0,1,0,,0,0,,.,.,,.,0,,1,0,,0,0,,.,0,,0,0,0'
+             seq2_seq4       '0,0,0,,1,0,,.,.,,.,0,,1,0,,0,0,,.,0,,0,0,.'
+<b>Usage     </b> : %position_diffs =%{&get_residue_error_rate(\@seq_position1, \@seq_position2)};
+<b>Used in   </b> : get_position_shift_rate, previously get_each_posi_diff_hash
+<b>Version   </b> : 1.1
+<b>Warning   </b> : split and join char is ',';
+</pre><hr>
+
+<H3><A href="handle_arguments
+.pl.html">handle_arguments
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/handle_arguments
+.pl">handle_arguments
+.pl</A>
+<pre>
+<b>Argument  </b> : any type, any amount
+<b>Author    </b> : A Biomatic
+<b>Class     </b> : Perl::Utility::Arg_handling
+<b>Example   </b> : 'handle_arguments(\@array, $string, \%hash, 8, 'any_string')
+<b>Function  </b> : Sorts input arguments going into subroutines and returns default
+             arrays of references for various types (file, dir, hash, array,,,,)
+             If you give (\@out, @file), it will put @out into @array as a ref
+             and also the contents of @out will be dereferenced and put to
+             raw_string regardless what is in it).
+
+<b>Keywords  </b> : handling arguments, parsing arguments,
+<b>Returns   </b> : Following GLOBAL variables
+
+             $num_opt,    @num_opt     @file          @dir
+             $char_opt,   @char_opt    %vars          @array,
+             @hash        @string,     @raw_string    @range,
+
+             $num_opt has 10,20
+             @num_opt has (10, 20)
+             @file has  xxxx.ext
+             @dir has  dir  or /my/dir
+             $char_opt has 'A,B'
+             @char_opt has (A, B)
+             @array has  (\@ar1, \@ar2)
+             @hash has (\%hash1, \%hash2)
+             @string  ('sdfasf', 'dfsf')
+             @raw_string (file.ext, dir_name, 'strings',,)
+             @range has values like  10-20
+             %vars deals with x=2, y=3 stuff.
+
+<b>Tips      </b> : takes 0.02 u time with INDY
+<b>Usage     </b> : Just put the whole box delimited by the two '###..' lines below
+             to inside of your subroutines. It will call 'handle_arguments'
+             subroutine and parse all the given input arguments.
+             To use, claim the arguments, just use the variable in the box.
+             For example, if you had passed 2 file names for files existing
+             in your PWD(or if the string looks like this: xxxx.ext),
+             you can claim them by $file[0], $file[1] in
+             your subroutine.
+<b>Used in   </b> : everywhere
+<b>Version   </b> : 4.6
+             set_debug_option  is added.
+</pre><hr>
+
+<H3><A href="show_hash
+.pl.html">show_hash
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/show_hash
+.pl">show_hash
+.pl</A>
+<pre>
+<b>Author    </b> : A Biomatic
+<b>Example   </b> : Output:      item1
+             Output:      item2
+             Output:      item3
+<b>Function  </b> : for debugging purpose. Shows any array elem line by line.
+             the line is 60 elements long (uses recursion)
+<b>Options   </b> : -s or -S or s or S for spaced output. Eg)
+             seq1       1 1 1 1 1 1 1 1 1 1 1 1
+
+             instead of
+             seq1       111111111111
+
+             -h or -H or h or H for horizontal line of '---------...'
+
+<b>Package   </b> : Array_Util
+<b>Usage     </b> : &show_hash(\@input_array);
+<b>Version   </b> : 1.7
+<b>Warning   </b> : There is a global variable:  $show_hash_option
+             It tries to detect any given sting which is joined by ','
+</pre><hr>
+
+<H3><A href="remove_dup_in_array
+.pl.html">remove_dup_in_array
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/remove_dup_in_array
+.pl">remove_dup_in_array
+.pl</A>
+<pre>
+<b>Argument  </b> : one or more refs for arrays or one array.
+<b>Example   </b> : (1,1,1,1,3,3,3,3,4,4,4,3,3,4,4);  --> (1,3,4);
+<b>Function  </b> : removes duplicate entries in an array.
+<b>Keywords  </b> : merge array elements, remove_repeting_elements,
+             remove_same_array_elements
+<b>Returns   </b> : one or more references.
+<b>Usage     </b> : @out2 = @{&remove_dup_in_array(\@input1, \@input2,,,,)};
+             @out1 = @{&remove_dup_in_array(\@input1 )};
+<b>Version   </b> : 1.3
+</pre><hr>
+
+<H3><A href="assign_options_to_variables
+.pl.html">assign_options_to_variables
+</A></H3>Download <A href="ftp://ftp.mrc-lmb.cam.ac.uk/pub/genomes/jong/Perl/assign_options_to_variables
+.pl">assign_options_to_variables
+.pl</A>
+<pre>
+<b>Argument  </b> : None.
+<b>Author    </b> : A Scientist
+<b>Example   </b> : When you want to set 'a' char to a variable called '$dummy' in
+             the program, you put a head box commented line
+             '#  $dummy    becomes  a  by  -a '
+             Then, the parse_arguments and this sub routine will read the head
+             box and assigns 'a' to $dummy IF you put an argument of '-a' in
+             the prompt.
+<b>Function  </b> : Assigns the values set in head box to the variables used in
+             the programs according to the values given at prompt.
+             This produces global values.
+             When numbers are given at prompt, they go to @num_opt
+              global variable. %vars global option will be made
+
+<b>Options   </b> : '#' at prompt will make a var  $debug set to 1. This is to
+              print out all the print lines to make debugging easier.
+<b>Package   </b> : Bio::Utils
+<b>Returns   </b> : Some globaly used variables according to prompt options.
+             @num_opt,
+
+<b>Tips      </b> : Used with 'parse_arguments'
+<b>Usage     </b> : &assign_options_to_variables(\$input_line);
+<b>Version   </b> : 2.4
+<b>Warning   </b> : This is a global vars generator!!!
+</pre><hr>
+
+</html>

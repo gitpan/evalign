@@ -48,7 +48,7 @@
 #
 # Returns  : simple shifted positions.
 # Author   : A Biomatic
-# Version  : 1.4
+# Version  : 1.5
 # Package  : Part of Bioperl project.
 # Warning  :
 #-------------------------------------------------------------------
@@ -1023,7 +1023,7 @@ sub parse_arguments{
   return(\@input_files);
 }
 
-#________________________________________________________________________
+#________________________________________________________________________________________
 # Title     : print_seq_in_block
 # Usage     : &print_seq_in_block (\$block_leng, 'i',\%h1, 'sort', \%h2, \%hash3,,,);
 # Function  : gets many refs  for one scalar  or hashes and prints
@@ -1033,13 +1033,22 @@ sub parse_arguments{
 #             's' or 'S' => printout sorted by seq names.
 #             'i' or 'I' => interlaced print.(this requires identical names in hashes)
 #             'v' or 'V' => show sequence start number at each line
+#             'g' or 'G' => with gap chars between  aa residues
+#              l= for block length. Default is 60 char
+#              t= for specifying the length of seq names shown
+#              t  for truncating seq names shwn to 12 chars.
+#              f= for file output  eg. f=XXXXXX.issa
+#              r=digit-digit  (eg. 10-70) to take only the defined region of sequences
+#            digit-digit  (eg. 10-70) to take only the defined region of sequences
+#
+#            just digit  for block length
+#
 #             (all options can be like \$sort
 #             while $sort has 's' as value. naked number like 100 will be the
 #             block_length. 'i' or 'I' => interlaced print.(this requires
 #             identical names in hashes)
 # Warning   :
-# Class     :
-# Keywords  :
+# Keywords  : print_sequence_in_block print_alignment_in_block
 # Example   : If there are 3 hashes output will be; (in the order of \%hash3, \%hash2, \%hash1)
 #             >> 1st Hash        >> 2nd Hash         >> 3rd Hash
 #             Name1  THIS-IS-    Name123  eHHHHHHH   Name123  12222223
@@ -1049,17 +1058,9 @@ sub parse_arguments{
 #                            Name123  eHHHHHHH
 #                            Name123  12222223
 #
-# Package   :
-# Reference :
-# Returns   :
-# Tips      :
 # Argument  : many refs  for hash (one for bottm, one for top, etc,top hash is usually
 #               to denote certain caculations or results of the bottom one
-# Todo      :
-# Author    : A Biomatic
-# Version   : 1.1
-# Used in   :
-# Enclosed  :   -- Following are examples.
+# Version   : 1.4
 #             Example of ( no option, DEFAULT )  # Example of ('i' or 'I' option,
 #                                                                INTERLACE )
 #             6taa           ----ATPADWRSQSIY    #   6taa       ------ATPADWRSQSIY
@@ -1076,7 +1077,6 @@ sub parse_arguments{
 #
 #             Example of('s' or 'S' option,SORT) # Example of ('o' or 'O' option,
 #                                                        ORDERED by input hashes )
-#
 #             1cdg           APDTSVSNKQNFSTDV    #   6taa       ------ATPADWRSQSIY
 #             2aaa           ------LSAASWRTQS    #   2aaa       ------LSAASWRTQSIY
 #             6taa           ------ATPADWRSQS    #   1cdg       APDTSVSNKQNFSTDVIY
@@ -1088,15 +1088,16 @@ sub parse_arguments{
 #             1cdg           6752327236000000    #   6taa       ------563640130000
 #             2aaa           ------2717601310    #   2aaa       ------271760131000
 #             6taa           ------5636401300    #   1cdg       675232723600000000
-#--------------------------------------------------------------------
+#-----------------------------------------------------------------------------------
 sub print_seq_in_block{
   my($c, $d, $e, $f, $k, $i, $s, $t,@in,$gapped,
 	  %input0,%input1,%input2,%input3,%input4, @names0, @names1, @names2, @names3,
-	  $intl,$z,$diff,$offset);
+	  $intl,$z,$diff,$offset, $truncate_name_to_10_char, $trunc_name_to, $block_range,
+	  $write_out_file);
   my($bl)=60;
   my($sort) =0; my($n_space)=0; my($ordered) =0; my($gap_char) ='-';
   my($na,$larg,$names,$seq, $visual_num); my($n)=13;
-  sub num{ $a <=> $b; } my(@in_ar, $bl_passed);
+  my(@in_ar, $bl_passed);
 
   ###############  ARGV handling ######################
   for($k=0; $k< @_ ;$k++){
@@ -1105,8 +1106,13 @@ sub print_seq_in_block{
 		  if($_[$k]=~ /^[\-sS]$/)   { $sort =    1; next;}
 		  if($_[$k]=~ /^[\-nN]$/)   { $n_space = 1; next;}
 		  if($_[$k]=~ /^[\-iI]$/)   { $intl =    1; next;}
-		  if($_[$k]=~ /^[\-]*[gG]+/){ $gapped   =  1; next;}
-		  if($_[$k]=~ /^[\-]*[vV]+/){ $visual_num =  1; next;}
+		  if($_[$k]=~ /^[\-]*[g]+/i){ $gapped   =  1; next;}
+		  if($_[$k]=~ /^[\-]*[v]+/i){ $visual_num =  1; next;}
+		  if($_[$k]=~ /^[\-]*l *= *(\d+)/i){ $bl =  $1; next;}
+		  if($_[$k]=~ /[r=]?(\d+\-\d+)$/i){ $block_range = $1; next;}                 # options, be it number or
+		  if($_[$k]=~ /^[\-]*t=(\d+)/i){ $trunc_name_to = $1; next;}                 # options, be it number or
+		  if($_[$k]=~ /^[\-]*[t]/i) { $truncate_name_to_10_char = 1; next;}                 # options, be it number or
+		  if($_[$k]=~ /f=(\S+)/i) {  $write_out_file = $1; next;}                 # options, be it number or
 		  elsif($_[$k]=~ /^[\-oO]$/){ $ordered = 1;      }
 	  }
 	  elsif( ref($_[$k]) eq "SCALAR" ){     #<--   option handling
@@ -1116,6 +1122,11 @@ sub print_seq_in_block{
 		  if(${$_[$k]}=~ /^[\-iI]$/){$intl = 1;next;}                 # options, be it number or
 		  if(${$_[$k]}=~ /^[\-]*[g]/i){ $gapped =   1; next;}                 # options, be it number or
 		  if(${$_[$k]}=~ /^[\-]*[v]/i){ $visual_num = 1; next;}                 # options, be it number or
+		  if(${$_[$k]}=~ /^[\-]*l *= *(\d+)/i){ $bl =  $1; next;}
+		  if(${$_[$k]}=~ /[r=]?(\d+\-\d+)$/i){ $block_range = $1; next;}                 # options, be it number or
+		  if(${$_[$k]}=~ /^[\-]*t=(\d+)/i){ $trunc_name_to = $1; next;}                 # options, be it number or
+		  if(${$_[$k]}=~ /^[\-]*[t]$/i){ $truncate_name_to_10_char = 1; next;}                 # options, be it number or
+		  if(${$_[$k]}=~ /f=(\S+)/i) {  $write_out_file = $1; next;}                 # options, be it number or
 		  elsif(${$_[$k]}=~ /^[o]$/i){$ordered = 1;}                  # or chars.
 	  }
 	  elsif(ref($_[$k]) eq "HASH") {  push(@in,  $_[$k]); } #<-- seqn handling hash
@@ -1123,65 +1134,63 @@ sub print_seq_in_block{
 	  elsif(ref($_[$k]) eq "SCALAR"){ push(@in,&convert_arr_and_str_2_hash($_[$k], $k));} #<-- conv array to hash.
   }
 
+  if($write_out_file){ open(FILE_OUT, ">$write_out_file"); print FILE_OUT "\n# Created by print_seq_in_block sub in $0\n\n"; }
+
   #########  HASH input handling ############
   for($k=0; $k< @in; $k++){
-		 if(ref($in[$k]) eq "HASH"){
-			  %{"input$k"}=%{$in[$k]};
-			  print %input0;
+		 if(ref($in[$k]) eq "HASH"){  %{"input$k"}=%{$in[$k]};    print %input0;
 			  if($sort == 1){   ## When the keys should be sorted.
 				  $keys_long= join("", keys(%{"input$k"}) );   ## makes a string of keys to do the next
 				  if ($keys_long =~ /[\d\.]+/){                ## see if there is digit.
-					  @{"names$k"}= sort num keys(%{"input$k"}); # numerical sort of keys(seq names)
-				  }
-				  elsif($keys_long =~ /[\w\.\,]+/){          ## if there is no digits,
+					  @{"names$k"}= sort {$a<=>$b} keys(%{"input$k"}); # numerical sort of keys(seq names)
+				  }elsif($keys_long =~ /[\w\.\,]+/){          ## if there is no digits,
 					  @{"names$k"}= sort keys(%{"input$k"});  ## do the normal string sort
 				  }
-			  }elsif($sort != 1){                           ## no sorting at all
-					  @{"names$k"}= keys(%{"input$k"});
-			  }
+			  }elsif($sort != 1){  @{"names$k"}= keys(%{"input$k"});   }
 
 			  if($gapped != 1){
 				  for($i=0; $i< @{"names$k"}; $i++){
-					 if(${"input$k"}{${"names$k"}[$i]} =~ /\,/){               # remove ','
-						${"input$k"}{${"names$k"}[$i]}=~ s/\,//g;
-					 }
+					 if(${"input$k"}{${"names$k"}[$i]} =~ /\,/){ ${"input$k"}{${"names$k"}[$i]}=~ s/\,//g;  }
 				  }
 			  }
 		 }
   }
-
-  ########################################################################
-  ##     Following is to make ends of sequences neat                   ##
-  ########################################################################
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
+  #     Following is to make ends of sequences neat and crop seq defined by $block_range, (eg. 10-70)
+  #__________________________________________________________________________________________________
   for($z=0; $z < @in; $z++){
-	 for($t=0;$t < @{"names$z"}; $t ++ ){
-		 $na=${"names$z"}[$t];
-		 $s=${"input$z"}{$na};
-		 $larg=length($s) if length($s)> $larg;
-		 $n=length($na) if length($na) > $n;
-		 if($s =~ /\-/){ $gap_char='-'; }elsif( $s =~ /\./){  $gap_char='.';  }
-		 if (length($s)<$larg){
-			$offset=length($s);
-			$diff=$larg-$offset;
-			substr($s,$offset,$larg)="$gap_char"x$diff;
-		 }
-	 }
-  }
+	  for($t=0;$t < @{"names$z"}; $t ++ ){
+		  $na=${"names$z"}[$t];
+		  if($block_range=~/(\d+)\-(\d+)/){  $start=$1; $length=$2-$1;
+			   if($length < 0){   print "# $na \t \$block_range: $block_range, WRONG !, $2 is less than $1 !!!\n", chr(7); }
+			   ${"input$z"}{$na}=substr(${"input$z"}{$na}, $start, $length);      }
+		  $s=${"input$z"}{$na};
+		  $larg=length($s) if length($s)> $larg;
+		  $n=length($na) if length($na) > $n;
+		  if($s =~ /\-/){ $gap_char='-'; }elsif( $s =~ /\./){  $gap_char='.';  }
+		  if (length($s)<$larg){   $offset=length($s);
+			 $diff=$larg-$offset;  substr($s,$offset,$larg)="$gap_char"x$diff;
+		  }
+	  }
+  } print "\n";
 
-  ########################################################################
-  ##     Following is the core code for making block printing          ##
-  ########################################################################
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  #     Following is the core code for making block printing
+  #_______________________________________________________________________
   if($ordered== 1){
 		$bl=$larg if (($larg < 60)&&($bl_passed != 1));
 		for($c=0; $c < @in; $c++){
 			for($k=0; $k < $larg; $k += $bl){
-				for($i=0; $i < @{"names$c"}; $i++){
-					 $names= ${"names$c"}[$i];
+				for($i=0; $i < @{"names$c"}; $i++){		 $names= ${"names$c"}[$i];
 					 $seq= substr( ${"input$c"}{$names},  $k,  $bl);
 					 $seq=join(" ", split(/\,/, $seq)) if $gapped == 1;
 					 if($visual_num==1){
-						 printf ("%-${n}s %4d %-$bl s\n", $names, ($k+1), $seq);
-					 }else{ printf ("%-${n}s %-$bl s\n", $names, $seq); }
+                          printf ("\%\-$n\s %4d \%\-$bl\s\n", $names, ($k+1), $seq);
+						  printf FILE_OUT ("\%\-$n\s %4d \%\-$bl\s\n", $names, ($k+1), $seq) if $write_out_file;
+					 }else{
+					      printf ("\%\-$n\s \%\-$bl\s\n", $names, $seq);
+						  printf FILE_OUT ("\%\-$n\s \%\-$bl\s\n", $names, $seq) if $write_out_file;
+					 }
 				}print "\n" unless($n_space == 1);
 			}print "\n";
 		}
@@ -1189,22 +1198,23 @@ sub print_seq_in_block{
 		  $bl=$larg  if (($larg < 50)&&($bl_passed != 1));
 		  for($k=0; $k < $larg; $k+=$bl){
 			 for($i=0; $i < @{"names0"}; $i++){
-				for($c=0; $c <= $#in; $c++){
-					 $names=${"names$c"}[$i];
+				for($c=0; $c <= $#in; $c++){	 $names=${"names$c"}[$i];
 					 $seq=substr(${"input$c"}{$names}, $k, $bl);
 					 $seq=join(" ", split(/\,/, $seq)) if $gapped == 1;
-					 if($visual_num==1){
-						 printf ("%-${n}s %4d %-$bl s\n", $names, ($k+1), $seq);
-					 }else{ printf ("%-${n}s %-$bl s\n", $names, $seq); }
+					 if($visual_num==1){ printf ("\%\-$n\s %4d \%\-$bl\s\n", $names, ($k+1), $seq);
+						                 printf FILE_OUT ("\%\-$n\s %4d \%\-$bl\s\n", $names, ($k+1), $seq) if $write_out_file;
+					 }else{	 printf ("\%\-$n\s \%\-$bl\s\n", $names, $seq);
+						     printf  FILE_OUT ("\%\-$n\s \%\-$bl\s\n", $names, $seq) if $write_out_file;
+					 }
 				}print "\n" unless($n_space ==1);
 			 }print "\n";
 		  }print "\n" unless($n_space ==1);
   }else{
-		############################################################
-		##           This is the default                          ##
-		############################################################
+		#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#           This is the default
+		#___________________________________________________________
 		for($k=0; $k < $larg; $k+=$bl){
-			$bl=$larg if (($larg < 50)&&($bl_passed != 1));
+			$bl=$larg if (($larg < 50) and ($bl_passed != 1));
 			for($c=0; $c < @in; $c++){  # $n is the name space size
 				my(@seq_names) = @{"names$c"};
 				for($i=0; $i < @seq_names; $i++){
@@ -1213,13 +1223,34 @@ sub print_seq_in_block{
 					 my($seq)=substr($long_seq, $k, $bl);
 					 $seq=join(" ", split(/\,/, $seq)) if $gapped == 1;
 					 if($visual_num==1){
-						 printf ("%-${n}s %4d %-$bl s\n", $names, ($k+1), $seq);
-					 }else{ printf ("%-${n}s %-$bl s\n", $names, $seq); }
+					     if($trunc_name_to=~/(\d+)/){   $n=$1; $truncate_name_to_10_char=0;
+					         $names=substr($names, 0, $n);
+							 printf ("\%\-$n\s %4d \%\-$bl\s\n", $names, ($k+1), $seq);
+							 printf FILE_OUT ("\%\-$n\s %4d \%\-$bl\s\n", $names, ($k+1), $seq) if $write_out_file;
+						 }elsif($truncate_name_to_10_char){	 $names=substr($names, 0, 12);
+							 printf ("%-12s  %4d \%\-$bl\s\n", $names, ($k+1), $seq);
+							 printf  FILE_OUT ("%-12s  %4d \%\-$bl\s\n", $names, ($k+1), $seq) if $write_out_file;
+					     }else{	 printf ("\%\-$n\s %4d %-\$bl\s\n", $names, ($k+1), $seq);
+							     printf FILE_OUT ("\%\-$n\s %4d \%\-$bl\s\n", $names, ($k+1), $seq) if $write_out_file;
+						 }
+					 }else{
+					     if($trunc_name_to=~/(\d+)/){   $n=$1; $truncate_name_to_10_char=0;
+							 $names=substr($names, 0, $n);
+							 printf ("\%\-$n\s \%\-$bl\s\n", $names, $seq);
+							 printf FILE_OUT ("\%\-$n\s \%\-$bl\s\n", $names, $seq) if $write_out_file;
+						 }elsif($truncate_name_to_10_char){	 $names=substr($names, 0,12);
+							 printf ("%-12s  \%\-$bl\s\n", $names, $seq);
+							 printf FILE_OUT ("%-12s  \%\-$bl\s\n", $names, $seq) if $write_out_file;
+					     }else{	 printf ("\%\-$n\s \%\-$bl\s\n", $names, $seq);
+							     printf  FILE_OUT ("\%\-$n\s \%\-$b\s\n", $names, $seq) if $write_out_file;
+					     }
+				     }
 				}print "\n" unless($n_space ==1);
 			}print "\n";
 		}
 	}
 }
+
 #________________________________________________________________________
 # Title     : open_dssp_files
 # Usage     : (*out, *out2) = @{&open_dssp_files(\$inputfile1, \$inputfile2, \$H, \$S,,,,)};
@@ -1656,7 +1687,8 @@ sub read_any_seq_files{
 		 @file_ext_accepted=('msf', 'fasta','jp','aln','ali','pir',
 								  'slx', 'dna','fas','pdb','rms','brk', 'dssp');
 		 if( ! -e ${$in[$o]}  or -B ${$in[$o]} or -z ${$in[$o]}  ){
-			 print "\n#SUB read_any_seq_files: ${$in[$o]} no seq file exists(or not passed at all) for $0 \n\n",
+             print "\n# $0: read_any_seq_files: ${$in[$o]} no seq file exists(or not passed at all) for $0\n",
+             print "\n# $0: Check if you are in the right directory!! \n\n",
 			 chr(7);
 			 exit;
 		 }
