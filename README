@@ -1,0 +1,59 @@
+#___________________________________________________________________________
+# Title    : evalign.pl
+#
+# Function : When you align any sequences by computer algorithms, you want
+#            to know whether they are correctly aligned in terms of structures.
+#            If the sequences are from already known structures, you can compare
+#            and align structural sequences which can be said 'biologically correct'.
+#            This program, 'evalign.pl' is for comparing the two sets of sequences
+#            aligned, by calculating the absolute position differences between the
+#            correct and computer aligned one. This is aware of gap intertions and
+#            correct alignment made after wrong alignment segment is counted as correct.
+#            It accepts two sequence files at prompt to calculate the differences
+#            of positions of the sequences in the input files. The input sequences
+#            should be identical in both files.
+#            As an option, this also displays Percentage IDentity.
+#
+# Usage    : "evalign.pl any_seq_file.msf any_struc_file.jp ["  while any_seq_file.msf
+#            is a computer aligned output and any_struc_file.jp is a any seq file
+#            from known structures. (eg,  evalign.pl  aa.msf aa.jp )
+#
+# Example  : evalign.pl aa.msf aa.jp -ss -H -E -p
+#
+# Argument : Two files of sequence alignment. The first one should be COMPUTER aligned
+#            and the second one is the CORRECT (i.e., structural) alignment.
+# Options  : seg is for showing the accuracy of alignment on secondary str. blocks.
+#            ss  is for showing DSSP secondary structure assignment in output.
+#            H   is for showing HELIX DSSP secondary structure assignment in output.
+#            E   is for showing Beta-strand DSSP secondary structure assignment in out.
+#            s   is for sorted final output.
+#            p   is for displaying conventional percent ID.
+#            h   is for displaying help
+#            ns  is for $no_simplify by -ns, ns, Ns, NS, -Ns # seq names are sorted in final output
+#            t=  is for convert to num of 1 or 0 threshold.
+#            c   is for convert to num of 1 or 0, default threshold '1' is used
+#            N   for DO NOT Normalize the error rate which can be more than 1 digit
+#
+# $NO_normalize      = 1  by  N -N
+# $segment_rate      = 1  by  -seg, seg, Seg # Shows secondary str. block PSR
+# $show_percent_id   = 1  by  -p, -P, p, P,  # Shows conventional percent ID.
+# $show_sec_str      = 1  by  -ss, ss or SS  # Show Secondary Structure -ss option
+# $HELIX_only        = H  by  -H, H          # Shows conventional percent ID.
+# $BETA_only         = E  by  -E, E          # Shows conventional percent ID.
+# $print_sort        = s  by  -s, s or S     # seq names are sorted in final output
+# $interlaced        = i  by  -i, i or I     # seq names are sorted in final output
+# $no_simplify       = 1  by  -ns, ns, Ns, NS, -Ns # seq names are sorted in final output
+# $threshold         =    by  t=    # seq names are sorted in final output
+# $convert_to_0_or_1 = 1  by  -c, C, c, Con  # seq names are sorted in final output
+# $HELP              = 1  by  -h, h          # for showing help
+#
+# Returns  : simple shifted positions.
+# Author   : Jong Park
+# Version  : 1.4
+# Package  : Part of Bioperl project.
+#-------------------------------------------------------------------
+
+ftp site:  ftp.mrc-lmb.cam.ac.uk  /pub/genomes/Software/Evalign
+
+
+
