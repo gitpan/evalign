@@ -1,3 +1,9 @@
+
+
+                       Evalign
+
+
+
 #___________________________________________________________________________
 # Title    : evalign.pl
 #
@@ -53,7 +59,7 @@
 # Package  : Part of Bioperl project.
 #-------------------------------------------------------------------
 
-ftp site:  ftp.mrc-lmb.cam.ac.uk  /pub/genomes/Software/Evalign
+ftp site:  ftp.mrc-lmb.cam.ac.uk  /pub/genomes/jong/Software/Evalign
 
 
 

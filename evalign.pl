@@ -18,6 +18,7 @@
 #            is a computer aligned output and any_struc_file.jp is a any seq file
 #            from known structures. (eg,  evalign.pl  aa.msf aa.jp )
 # Example  : evalign.pl aa.msf aa.jp -ss -H -E -p
+#
 # Argument : Two files of sequence alignment. The first one should be COMPUTER aligned
 #            and the second one is the CORRECT (i.e., structural) alignment.
 # Options  : seg is for showing the accuracy of alignment on secondary str. blocks.
